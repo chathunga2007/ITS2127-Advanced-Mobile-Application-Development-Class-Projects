@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { initializeAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyChK-V7o0Yu29nrbBL0zWxc5iu1jJjS_Ac",
+  apiKey: process.env.API_KEY || "",
   authDomain: "afdgf-5253a.firebaseapp.com",
   projectId: "afdgf-5253a",
   storageBucket: "afdgf-5253a.firebasestorage.app",
