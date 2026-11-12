@@ -1,12 +1,31 @@
-import { Slot } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { AuthProvider } from "@/context/AuthContext"
+import { LoaderProvider } from "@/context/LoaderContext"
+import { Slot } from "expo-router"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 const RootLayout = () => {
   return (
-    <SafeAreaView className='flex-1'>
-      <Slot />
-    </SafeAreaView>
+    <LoaderProvider>
+      <AuthProvider>
+        <SafeAreaView className="flex-1">
+          <Slot />
+        </SafeAreaView>
+      </AuthProvider>
+    </LoaderProvider>
   )
+}
+
+export default RootLayout
+
+// import { Slot } from 'expo-router'
+// import { SafeAreaView } from 'react-native-safe-area-context'
+
+// const RootLayout = () => {
+//   return (
+//     <SafeAreaView className='flex-1'>
+//       <Slot />
+//     </SafeAreaView>
+//   )
   // return <Slot />
   // return (
   //   <View className='w-full flex-1 justify-center items-center'>
@@ -22,6 +41,6 @@ const RootLayout = () => {
   //     </View>
   //   </View>
   // )
-}
+// }
 
-export default RootLayout
+// export default RootLayout
