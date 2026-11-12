@@ -1,63 +1,81 @@
-import { Tabs } from 'expo-router';
-import { SymbolView } from 'expo-symbols';
+import MaterialIcons from "@react-native-vector-icons/material-icons"
+import { Tabs } from "expo-router"
 
 const DashboardLayout = () => {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4f46e5',
-        tabBarInactiveTintColor: '#94a3b8',
+        tabBarActiveTintColor: "#4f46e5",
+        tabBarInactiveTintColor: "#94a3b8",
         tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopColor: '#f1f5f9',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          backgroundColor: "#ffffff",
+          borderTopColor: "#f1f5f9",
         },
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <SymbolView
-              name={{ ios: 'house.fill', android: 'home', web: 'home' }}
-              tintColor={color}
-              size={size}
-            />
-          ),
+          title: "Home",
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <MaterialIcons
+                name={focused ? "home" : "home-filled"}
+                size={size}
+                color={color}
+              />
+            )
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="tasks"
+        options={{
+          title: "Tasks",
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <MaterialIcons
+                name={focused ? "list" : "list-alt"}
+                size={size}
+                color={color}
+              />
+            )
+          },
         }}
       />
       <Tabs.Screen
         name="news"
         options={{
-          title: 'News',
-          tabBarIcon: ({ color, size }) => (
-            <SymbolView
-              name={{ ios: 'newspaper.fill', android: 'article', web: 'article' }}
-              tintColor={color}
-              size={size}
-            />
-          ),
+          title: "News",
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <MaterialIcons
+                name={focused ? "article" : "list-alt"}
+                size={size}
+                color={color}
+              />
+            )
+          },
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <SymbolView
-              name={{ ios: 'person.fill', android: 'person', web: 'person' }}
-              tintColor={color}
-              size={size}
-            />
-          ),
+          title: "Profile",
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <MaterialIcons
+                name={focused ? "settings" : "settings-applications"}
+                size={size}
+                color={color}
+              />
+            )
+          },
         }}
       />
     </Tabs>
-  );
-};
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout
