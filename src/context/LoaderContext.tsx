@@ -1,6 +1,6 @@
 // context/LoaderContext.tsx
-import React, { createContext, useState, ReactNode, useContext } from "react"
-import { View, ActivityIndicator } from "react-native"
+import { createContext, ReactNode, useState } from "react"
+import { ActivityIndicator, View } from "react-native"
 
 interface LoaderContextProps {
   showLoader: () => void
