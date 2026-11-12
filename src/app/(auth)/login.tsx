@@ -1,191 +1,162 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useLoader } from "@/hooks/useLoader"
+import { login } from "@/services/auth.service"
+import MaterialIcons from "@react-native-vector-icons/material-icons"
+import { useRouter } from "expo-router"
+import { useState } from "react"
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native"
 
 const LoginScreen = () => {
-  const router = useRouter();
+  const router = useRouter()
+  const { showLoader, hideLoader } = useLoader()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const handleLogin = async () => {
+    if (!email.trim() || !password) {
+      setErrorMessage("Please enter both email and password")
+      return
+    }
 
-  const handleLogin = () => {
-    // Navigate to dashboard or handle authentication
-    router.replace('/(dashboard)');
-  };
+    try {
+      setErrorMessage("")
+      showLoader()
+      await login(email.trim(), password)
+      router.replace("/home")
+    } catch (err: any) {
+      console.error(err)
+      setErrorMessage(err?.message || "Invalid email or password")
+    } finally {
+      hideLoader()
+    }
+  }
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      className="flex-1 bg-slate-50"
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          className="px-6 py-8"
-        >
-          {/* Top Brand Header */}
-          <View className="mt-4">
-            <View className="w-12 h-12 rounded-2xl bg-indigo-600 items-center justify-center mb-6 shadow-sm shadow-indigo-300">
-              <Text className="text-white text-xl font-black">A</Text>
+        <View className="flex-1 justify-center px-6 py-12">
+          {/* Brand Badge */}
+          <View className="items-center mb-8">
+            <View className="w-16 h-16 rounded-3xl bg-indigo-600 items-center justify-center mb-4 shadow-lg shadow-indigo-200">
+              <MaterialIcons name="bolt" size={34} color="#ffffff" />
             </View>
-
-            <Text className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              Welcome back
+            <Text className="text-3xl font-black text-slate-900 tracking-tight">
+              Welcome Back
             </Text>
-            <Text className="text-base text-slate-500 mt-2 font-normal">
-              Enter your credentials to access your account.
+            <Text className="text-sm text-slate-500 mt-1">
+              Sign in to manage your daily tasks & news
             </Text>
           </View>
 
-          {/* Form Fields */}
-          <View className="my-8 gap-y-4">
-            {/* Email Input */}
-            <View>
-              <Text className="text-sm font-semibold text-slate-700 mb-2">
-                Email address
+          {/* Form Card */}
+          <View className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm shadow-slate-200">
+            {errorMessage ? (
+              <View className="bg-rose-50 border border-rose-200 rounded-2xl p-3 mb-4 flex-row items-center gap-x-2">
+                <MaterialIcons name="error-outline" size={18} color="#e11d48" />
+                <Text className="text-rose-600 text-xs font-semibold flex-1">
+                  {errorMessage}
+                </Text>
+              </View>
+            ) : null}
+
+            {/* Email Field */}
+            <View className="mb-4">
+              <Text className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Email Address
               </Text>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="name@company.com"
-                placeholderTextColor="#94a3b8"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 text-base focus:border-indigo-600"
-              />
+              <View className="flex-row items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3">
+                <MaterialIcons name="mail-outline" size={20} color="#64748b" />
+                <TextInput
+                  value={email}
+                  onChangeText={(val) => {
+                    setEmail(val)
+                    if (errorMessage) setErrorMessage("")
+                  }}
+                  placeholder="name@example.com"
+                  placeholderTextColor="#94a3b8"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  className="flex-1 ml-3 text-slate-800 text-sm font-medium"
+                />
+              </View>
             </View>
 
-            {/* Password Input */}
-            <View>
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm font-semibold text-slate-700">
-                  Password
-                </Text>
-                <TouchableOpacity activeOpacity={0.7}>
-                  <Text className="text-xs font-semibold text-indigo-600">
-                    Forgot password?
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View className="relative justify-center">
+            {/* Password Field */}
+            <View className="mb-6">
+              <Text className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Password
+              </Text>
+              <View className="flex-row items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3">
+                <MaterialIcons name="lock-outline" size={20} color="#64748b" />
                 <TextInput
                   value={password}
-                  onChangeText={setPassword}
+                  onChangeText={(val) => {
+                    setPassword(val)
+                    if (errorMessage) setErrorMessage("")
+                  }}
                   placeholder="••••••••"
                   placeholderTextColor="#94a3b8"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
-                  className="w-full bg-white border border-slate-200 rounded-xl pl-4 pr-16 py-3.5 text-slate-900 text-base focus:border-indigo-600"
+                  className="flex-1 ml-3 text-slate-800 text-sm font-medium"
                 />
                 <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 py-1"
                   activeOpacity={0.7}
+                  onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Text className="text-xs font-medium text-slate-500">
-                    {showPassword ? 'Hide' : 'Show'}
-                  </Text>
+                  <MaterialIcons
+                    name={showPassword ? "visibility" : "visibility-off"}
+                    size={20}
+                    color="#64748b"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Remember Me */}
-            <Pressable
-              onPress={() => setRememberMe(!rememberMe)}
-              className="flex-row items-center mt-1"
-            >
-              <View
-                className={`w-5 h-5 rounded-md border items-center justify-center mr-2.5 ${
-                  rememberMe
-                    ? 'bg-indigo-600 border-indigo-600'
-                    : 'bg-white border-slate-300'
-                }`}
-              >
-                {rememberMe && (
-                  <Text className="text-white text-xs font-bold leading-none">
-                    ✓
-                  </Text>
-                )}
-              </View>
-              <Text className="text-sm text-slate-600 select-none">
-                Remember me for 30 days
-              </Text>
-            </Pressable>
-
             {/* Submit Button */}
             <TouchableOpacity
-              onPress={handleLogin}
               activeOpacity={0.85}
-              className="w-full bg-indigo-600 py-3.5 rounded-xl items-center justify-center mt-3 shadow-md shadow-indigo-200 active:bg-indigo-700"
+              onPress={handleLogin}
+              className="bg-indigo-600 rounded-2xl py-3.5 items-center justify-center shadow-md shadow-indigo-200"
             >
-              <Text className="text-white text-base font-semibold">
-                Sign in
+              <Text className="text-white text-base font-bold tracking-wide">
+                Sign In
               </Text>
             </TouchableOpacity>
-
-            {/* Divider */}
-            <View className="flex-row items-center my-4">
-              <View className="flex-1 h-px bg-slate-200" />
-              <Text className="mx-3 text-xs uppercase tracking-wider text-slate-400 font-medium">
-                Or continue with
-              </Text>
-              <View className="flex-1 h-px bg-slate-200" />
-            </View>
-
-            {/* Social Logins */}
-            <View className="flex-row gap-x-3">
-              <TouchableOpacity
-                activeOpacity={0.8}
-                className="flex-1 flex-row items-center justify-center border border-slate-200 bg-white py-3 rounded-xl"
-              >
-                <Text className="text-slate-800 text-sm font-semibold">
-                  Google
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                className="flex-1 flex-row items-center justify-center border border-slate-200 bg-white py-3 rounded-xl"
-              >
-                <Text className="text-slate-800 text-sm font-semibold">
-                  Apple
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
 
-          {/* Bottom Switcher */}
-          <View className="flex-row justify-center items-center pt-2">
+          {/* Footer Link */}
+          <View className="flex-row justify-center items-center mt-8 gap-x-1">
             <Text className="text-sm text-slate-500">
-              Don't have an account?{' '}
+              Don&apos;t have an account?
             </Text>
             <TouchableOpacity
-              onPress={() => router.push('/register')}
               activeOpacity={0.7}
+              onPress={() => router.push("/register")}
             >
-              <Text className="text-sm font-semibold text-indigo-600">
-                Sign up
-              </Text>
+              <Text className="text-sm font-bold text-indigo-600">Sign Up</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-};
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  )
+}
 
-export default LoginScreen;
+export default LoginScreen
