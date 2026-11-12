@@ -54,7 +54,6 @@
 
 // export default apiClient;
 
-
 import axios from "axios"
 
 const API_KEY = process.env.EXPO_PUBLIC_NEWS_API_KEY || ""
