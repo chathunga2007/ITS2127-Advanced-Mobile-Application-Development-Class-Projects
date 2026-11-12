@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import "./../global.css";
 
 const Index = () => {
-  return <Redirect href={"/home"}/>
+  return <Redirect href={"/login"}/>
   // return (
   //   <View style={styles.container}>
   //     <ScrollView 
