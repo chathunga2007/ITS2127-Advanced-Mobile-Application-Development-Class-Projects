@@ -1,14 +1,21 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react'
-import { onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from '@/services/firebaseConfig'
-import { loginUser, logoutUser } from '@/services/authService'
-import { showToast } from '@/utils/notifications'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { AppUser } from '@/types/user'
-import { useLoader } from '@/hooks/useLoader'
+import { useLoader } from "@/hooks/useLoader"
+import { auth } from "@/services/firebase"
+import { onAuthStateChanged, User } from "firebase/auth"
+import { createContext, ReactNode, useEffect, useState } from "react"
 
+export interface AppUser extends User {
+  fullName?: string
+}
 
-export const AuthContext = createContext<AuthContextType>()
+interface AuthContextType {
+  user: AppUser | null
+  loading: boolean
+}
+
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true
+})
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { showLoader, hideLoader, isLoading } = useLoader()
@@ -16,11 +23,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     showLoader()
-   
+    const unsubcribe = onAuthStateChanged(auth, (usr) => {
+      setUser(usr)
+      hideLoader()
+    })
+    return () => unsubcribe()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading: isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading: isLoading }}>
       {children}
     </AuthContext.Provider>
   )
